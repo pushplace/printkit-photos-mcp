@@ -59,7 +59,7 @@ The binary will be at `.build/debug/printkit-photos-mcp`. Use this path in the c
 
 ## Configure Claude Desktop
 
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Open the Claude Desktop app, then go to **Settings > Developer > Edit Config**. This opens `claude_desktop_config.json`. Add the `mcpServers` block:
 
 ```json
 {
