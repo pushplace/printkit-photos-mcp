@@ -15,6 +15,8 @@ Built on [morganp/photos-mcp](https://github.com/morganp/photos-mcp) (PhotoKit) 
 
 No API keys needed. No uploading to third-party services to browse. Your photos stay on your Mac until you choose to print.
 
+![Claude curating photos from Apple Photos library](screenshot.png)
+
 ## Status: Early & Experimental
 
 This works end-to-end -- you can browse your photos, have Claude pick the best ones, and print them. But it's early. Some things to know:
