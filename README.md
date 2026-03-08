@@ -1,14 +1,19 @@
-# Print My Photos
+# PrintKit Photos MCP
 
-An MCP server that connects your macOS Photos library to Claude. Browse your photos, see visual thumbnails, and print them as wall art via [PrintKit](https://printkit.dev).
+An MCP server that connects your macOS Photos library to Claude. Browse photos, let Claude curate the best shots, and print them as metal prints, wood prints, gallery frames, and more via [PrintKit](https://printkit.dev).
 
-Built on [morganp/photos-mcp](https://github.com/morganp/photos-mcp) (PhotoKit) + [PrintKit](https://printkit.dev) (print API).
+Built on [morganp/photos-mcp](https://github.com/morganp/photos-mcp) (PhotoKit) + [PrintKit](https://printkit.dev) (print API by [Social Print Studio](https://www.socialprints.com)).
 
-## The Flow
+## How It Works
 
-1. "Show me my vacation photos" -- `search_photos` finds them by date/keyword
-2. "Let me see them" -- `get_photo_thumbnails` exports 300px JPEGs, Claude sees them visually
-3. "Print that sunset as a metal print" -- `print_photo` exports, uploads, creates order, opens checkout
+```
+"Show me my photos from last weekend"
+  → Claude searches your library, sees the thumbnails, picks the best shots
+    → "Print that one as a metal print"
+      → Photo exported, uploaded, order created, checkout opens in your browser
+```
+
+No API keys needed. No uploading to third-party services to browse. Your photos stay on your Mac until you choose to print.
 
 ## Tools
 
@@ -17,11 +22,11 @@ Built on [morganp/photos-mcp](https://github.com/morganp/photos-mcp) (PhotoKit) 
 | `search_photos` | Search by date range, media type, keyword |
 | `list_albums` | List all user and smart albums |
 | `get_album_contents` | Fetch assets in a specific album |
-| `get_photo_thumbnails` | Export batch thumbnails (300px JPEG). Claude sees the actual images. |
-| `export_photo` | Export full-res photo/video to `/tmp` |
+| `get_photo_thumbnails` | Export batch thumbnails (300px JPEG) -- Claude sees the actual images and can curate the best ones |
+| `export_photo` | Export full-res photo to `/tmp` (auto-converts HEIC to JPEG) |
 | `create_album` | Create a new album |
 | `add_to_album` | Add an asset to an album |
-| `browse_printkit_products` | Browse PrintKit catalog -- metal, wood, acrylic, frames, etc. |
+| `browse_printkit_products` | Browse PrintKit catalog -- metal, wood, acrylic, frames, and more |
 | `print_photo` | One-shot print: asset ID + SKU in, checkout URL out |
 
 ## Prerequisites
@@ -33,10 +38,12 @@ Built on [morganp/photos-mcp](https://github.com/morganp/photos-mcp) (PhotoKit) 
 ## Install
 
 ```bash
-git clone https://github.com/user/photos-mcp.git
-cd photos-mcp
+git clone https://github.com/pushplace/printkit-photos-mcp.git
+cd printkit-photos-mcp
 swift build
 ```
+
+The binary will be at `.build/debug/photos-mcp`.
 
 ## Configure Claude Desktop
 
@@ -46,11 +53,13 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "photos": {
-      "command": "/absolute/path/to/photos-mcp/.build/debug/photos-mcp"
+      "command": "/absolute/path/to/printkit-photos-mcp/.build/debug/photos-mcp"
     }
   }
 }
 ```
+
+Restart Claude Desktop after saving.
 
 ## Configure Claude Code
 
@@ -60,7 +69,7 @@ Add to `~/.claude.json`:
 {
   "mcpServers": {
     "photos": {
-      "command": "/absolute/path/to/photos-mcp/.build/debug/photos-mcp"
+      "command": "/absolute/path/to/printkit-photos-mcp/.build/debug/photos-mcp"
     }
   }
 }
@@ -72,11 +81,17 @@ On first launch, macOS will prompt for Photos access. If it doesn't appear, gran
 
 **System Settings > Privacy & Security > Photos > photos-mcp**
 
-To verify Info.plist is embedded:
+## How PrintKit Integration Works
 
-```bash
-otool -s __TEXT __info_plist .build/debug/photos-mcp | head -5
-```
+No API key needed. The `print_photo` tool handles the full pipeline:
+
+1. Exports full-res photo from your library via PhotoKit
+2. Converts HEIC to JPEG automatically (Apple's default camera format isn't print-compatible)
+3. Gets a presigned upload URL from PrintKit
+4. Uploads the image to S3
+5. Creates an order and opens the Shopify checkout in your browser
+
+Available products include metal prints, wood prints, gallery frames, acrylic blocks, large format prints, and more. Use `browse_printkit_products` to see the full catalog with sizes and pricing.
 
 ## Architecture
 
@@ -92,15 +107,11 @@ Sources/Resources/
   Info.plist             -- embedded for TCC Photos permission
 ```
 
-## How PrintKit Works
+## Credits
 
-No API key needed. The `print_photo` tool:
-
-1. Exports full-res photo from Photos via PhotoKit
-2. Gets a presigned S3 upload URL from `printkit.dev/api/upload`
-3. Uploads the image to S3
-4. Creates an order via `printkit.dev/api/add-to-cart`
-5. Opens the Shopify checkout in your browser
+- Photo library access via [morganp/photos-mcp](https://github.com/morganp/photos-mcp)
+- Print fulfillment via [PrintKit](https://printkit.dev) by [Social Print Studio](https://www.socialprints.com)
+- MCP protocol via [modelcontextprotocol/swift-sdk](https://github.com/modelcontextprotocol/swift-sdk)
 
 ## License
 
