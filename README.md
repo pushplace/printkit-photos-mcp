@@ -15,6 +15,16 @@ Built on [morganp/photos-mcp](https://github.com/morganp/photos-mcp) (PhotoKit) 
 
 No API keys needed. No uploading to third-party services to browse. Your photos stay on your Mac until you choose to print.
 
+## Status: Early & Experimental
+
+This works end-to-end -- you can browse your photos, have Claude pick the best ones, and print them. But it's early. Some things to know:
+
+- **Claude sees your photos but you don't (yet).** Thumbnails are sent as image data in the MCP response. Claude can analyze and describe them, but Claude Desktop doesn't currently render MCP tool images inline. So Claude curates and describes your photos in text, and you pick from its recommendations. This will likely improve as Claude Desktop evolves.
+- **Photo search is based on metadata.** PhotoKit searches by date, media type, and filename -- not by visual content. Claude can't search for "photos of my dog" directly, but once it has thumbnails it can identify and recommend specific shots.
+- **HEIC conversion is handled automatically.** Apple Photos stores everything as HEIC. The server converts to JPEG on export so print pipelines don't choke.
+
+We're actively improving this. Contributions and ideas welcome.
+
 ## Tools
 
 | Tool | Description |
