@@ -1,5 +1,7 @@
 import Foundation
 import Photos
+import AppKit
+import UniformTypeIdentifiers
 
 final class PhotoKitService: @unchecked Sendable {
 
@@ -171,6 +173,29 @@ final class PhotoKitService: @unchecked Sendable {
                     continuation.resume()
                 }
             }
+        }
+
+        // Convert HEIC/HEIF to JPEG for compatibility
+        let ext = outputURL.pathExtension.lowercased()
+        if ext == "heic" || ext == "heif" {
+            let jpegURL = outputURL.deletingPathExtension().appendingPathExtension("jpg")
+            try? FileManager.default.removeItem(at: jpegURL)
+
+            guard let ciImage = CIImage(contentsOf: outputURL) else {
+                return outputURL.path
+            }
+            let context = CIContext()
+            let colorSpace = ciImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!
+            try context.writeJPEGRepresentation(
+                of: ciImage,
+                to: jpegURL,
+                colorSpace: colorSpace,
+                options: [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.9]
+            )
+
+            // Clean up original HEIC
+            try? FileManager.default.removeItem(at: outputURL)
+            return jpegURL.path
         }
 
         return outputURL.path

@@ -17,6 +17,8 @@ guard authStatus == .authorized || authStatus == .limited else {
 }
 
 let photosService = PhotoKitService()
+let thumbnailService = ThumbnailService()
+let printKitService = PrintKitService()
 
 let server = Server(
     name: "photos-mcp",
@@ -29,7 +31,7 @@ await server.withMethodHandler(ListTools.self) { _ in
 }
 
 await server.withMethodHandler(CallTool.self) { params in
-    try await handleToolCall(params: params, service: photosService)
+    try await handleToolCall(params: params, service: photosService, thumbnailService: thumbnailService, printKitService: printKitService)
 }
 
 let transport = StdioTransport()

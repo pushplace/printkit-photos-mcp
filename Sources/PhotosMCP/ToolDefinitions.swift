@@ -7,6 +7,9 @@ let allTools: [Tool] = [
     exportPhotoTool,
     createAlbumTool,
     addToAlbumTool,
+    getPhotoThumbnailsTool,
+    browsePrintkitProductsTool,
+    printPhotoTool,
 ]
 
 let searchPhotosTool = Tool(
@@ -119,5 +122,64 @@ let addToAlbumTool = Tool(
             ]),
         ]),
         "required": .array([.string("asset_id"), .string("album_id")]),
+    ])
+)
+
+// MARK: - Thumbnail Tool
+
+let getPhotoThumbnailsTool = Tool(
+    name: "get_photo_thumbnails",
+    description: "Export small JPEG thumbnails (default 300px) for a batch of photos by their asset IDs. Returns file paths that Claude can read to visually see the photos. Use after search_photos or get_album_contents to let the user preview and pick photos.",
+    inputSchema: .object([
+        "type": .string("object"),
+        "properties": .object([
+            "asset_ids": .object([
+                "type": .string("array"),
+                "description": .string("Array of localIdentifier strings for the photos to thumbnail"),
+                "items": .object([
+                    "type": .string("string"),
+                ]),
+            ]),
+            "max_dimension": .object([
+                "type": .string("integer"),
+                "description": .string("Maximum width/height in pixels (default: 300). Thumbnails maintain aspect ratio."),
+            ]),
+        ]),
+        "required": .array([.string("asset_ids")]),
+    ])
+)
+
+// MARK: - PrintKit Tools
+
+let browsePrintkitProductsTool = Tool(
+    name: "browse_printkit_products",
+    description: "Browse the PrintKit product catalog. Returns available print products (metal prints, wood prints, gallery frames, etc.) with sizes and prices. Optionally pass a product handle to get detailed variant info.",
+    inputSchema: .object([
+        "type": .string("object"),
+        "properties": .object([
+            "handle": .object([
+                "type": .string("string"),
+                "description": .string("Optional product handle for details (e.g. \"metal-prints\", \"wood-prints\", \"gallery-frames\", \"acrylic-photo-block\", \"large-format-prints\"). Omit to list all products."),
+            ]),
+        ]),
+    ])
+)
+
+let printPhotoTool = Tool(
+    name: "print_photo",
+    description: "Print a photo from your library via PrintKit. Exports the full-res photo, uploads it, creates an order, and opens the checkout page in your browser. One-shot: asset ID + SKU in, checkout URL out.",
+    inputSchema: .object([
+        "type": .string("object"),
+        "properties": .object([
+            "asset_id": .object([
+                "type": .string("string"),
+                "description": .string("The localIdentifier of the photo to print"),
+            ]),
+            "sku": .object([
+                "type": .string("string"),
+                "description": .string("Product variant SKU from browse_printkit_products (e.g. \"MT-8x10\")"),
+            ]),
+        ]),
+        "required": .array([.string("asset_id"), .string("sku")]),
     ])
 )

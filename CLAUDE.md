@@ -51,6 +51,9 @@ otool -s __TEXT __info_plist .build/debug/photos-mcp | head -5
 | export_photo | Export asset to /tmp, returns file path |
 | create_album | Create a new album |
 | add_to_album | Add an asset to an album |
+| get_photo_thumbnails | Export batch of 300px JPEG thumbnails, returns inline images Claude can see |
+| browse_printkit_products | Fetch PrintKit product catalog (all products or specific handle) |
+| print_photo | One-shot: export photo -> upload to PrintKit -> create order -> open checkout |
 
 ## Architecture
 
@@ -58,6 +61,8 @@ otool -s __TEXT __info_plist .build/debug/photos-mcp | head -5
 Sources/PhotosMCP/
   main.swift             -- entry point, authorization, server setup
   PhotoKitService.swift  -- all PhotoKit interactions (async bridges)
+  ThumbnailService.swift -- batch thumbnail export via PHImageManager
+  PrintKitService.swift  -- PrintKit API client (upload, order, catalog)
   ToolDefinitions.swift  -- MCP tool schemas (inputSchema)
   ToolHandlers.swift     -- tool call dispatch and argument parsing
 Sources/Resources/
