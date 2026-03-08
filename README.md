@@ -55,7 +55,7 @@ cd printkit-photos-mcp
 swift build
 ```
 
-The binary will be at `.build/debug/photos-mcp`.
+The binary will be at `.build/debug/printkit-photos-mcp`. Use this path in the config below.
 
 ## Configure Claude Desktop
 
@@ -65,7 +65,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "photos": {
-      "command": "/absolute/path/to/printkit-photos-mcp/.build/debug/photos-mcp"
+      "command": "/absolute/path/to/printkit-photos-mcp/.build/debug/printkit-photos-mcp"
     }
   }
 }
@@ -81,7 +81,7 @@ Add to `~/.claude.json`:
 {
   "mcpServers": {
     "photos": {
-      "command": "/absolute/path/to/printkit-photos-mcp/.build/debug/photos-mcp"
+      "command": "/absolute/path/to/printkit-photos-mcp/.build/debug/printkit-photos-mcp"
     }
   }
 }

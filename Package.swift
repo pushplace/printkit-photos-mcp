@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "photos-mcp",
+    name: "printkit-photos-mcp",
     platforms: [
         .macOS(.v13),
     ],
     products: [
-        .executable(name: "photos-mcp", targets: ["PhotosMCP"]),
+        .executable(name: "printkit-photos-mcp", targets: ["PhotosMCP"]),
     ],
     dependencies: [
         .package(url: "https://github.com/modelcontextprotocol/swift-sdk.git", from: "0.11.0"),

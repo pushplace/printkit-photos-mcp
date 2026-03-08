@@ -11,7 +11,7 @@ swift build
 ## Run (standalone test)
 
 ```
-echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}' | .build/debug/photos-mcp
+echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}' | .build/debug/printkit-photos-mcp
 ```
 
 ## Run with Claude Code
@@ -22,7 +22,7 @@ Add to ~/.claude/claude_desktop_config.json (or the appropriate MCP config):
 {
   "mcpServers": {
     "photos": {
-      "command": "/absolute/path/to/.build/debug/photos-mcp"
+      "command": "/absolute/path/to/.build/debug/printkit-photos-mcp"
     }
   }
 }
@@ -38,7 +38,7 @@ System Settings > Privacy & Security > Photos > photos-mcp
 
 To verify the Info.plist is embedded (required for TCC prompt):
 ```
-otool -s __TEXT __info_plist .build/debug/photos-mcp | head -5
+otool -s __TEXT __info_plist .build/debug/printkit-photos-mcp | head -5
 ```
 
 ## Tools
@@ -74,7 +74,7 @@ Sources/Resources/
 ```
 swift build && echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"test","version":"0.1"}}}
 {"jsonrpc":"2.0","method":"notifications/initialized"}
-{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | .build/debug/photos-mcp
+{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' | .build/debug/printkit-photos-mcp
 ```
 
 ## Lint
