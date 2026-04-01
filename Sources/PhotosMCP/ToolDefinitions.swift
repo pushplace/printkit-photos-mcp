@@ -14,7 +14,7 @@ let allTools: [Tool] = [
 
 let searchPhotosTool = Tool(
     name: "search_photos",
-    description: "Search photos by date range, media type, and/or keyword. Returns local identifiers and metadata.",
+    description: "Search the user's Apple Photos library on this Mac. You have full access to their photos — use this when they mention their photos, pictures, camera roll, or want to find an image they took. Returns asset IDs and metadata. Search by date range, media type, and/or filename keyword.",
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
@@ -45,7 +45,7 @@ let searchPhotosTool = Tool(
 
 let listAlbumsTool = Tool(
     name: "list_albums",
-    description: "List all user albums and smart albums in the Photos library.",
+    description: "List all albums in the user's Apple Photos library on this Mac, including user-created and smart albums (Favorites, Recents, etc.).",
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
@@ -59,7 +59,7 @@ let listAlbumsTool = Tool(
 
 let getAlbumContentsTool = Tool(
     name: "get_album_contents",
-    description: "Get all assets in a specific album by its local identifier.",
+    description: "Get all photos and videos in a specific Apple Photos album by its ID.",
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
@@ -129,7 +129,7 @@ let addToAlbumTool = Tool(
 
 let getPhotoThumbnailsTool = Tool(
     name: "get_photo_thumbnails",
-    description: "Export small JPEG thumbnails (default 300px) for a batch of photos by their asset IDs. Returns file paths that Claude can read to visually see the photos. Use after search_photos or get_album_contents to let the user preview and pick photos.",
+    description: "Get actual image thumbnails from the user's Photos library that you can see and analyze visually. Returns inline JPEG images for a batch of asset IDs. Use this after search_photos to look at the photos yourself, identify what's in them (pets, people, landscapes, etc.), and help the user pick the best shot.",
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
@@ -153,7 +153,7 @@ let getPhotoThumbnailsTool = Tool(
 
 let browsePrintkitProductsTool = Tool(
     name: "browse_printkit_products",
-    description: "Browse the PrintKit product catalog. Returns available print products (metal prints, wood prints, gallery frames, etc.) with sizes and prices. Optionally pass a product handle to get detailed variant info.",
+    description: "Browse the PrintKit print product catalog with sizes, prices, and SKUs. Products include metal prints, wood prints, gallery frames, acrylic blocks, and large format prints. Use this to find the right SKU before calling print_photo.",
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
@@ -167,7 +167,7 @@ let browsePrintkitProductsTool = Tool(
 
 let printPhotoTool = Tool(
     name: "print_photo",
-    description: "Print a photo from your library via PrintKit. Exports the full-res photo, uploads it, creates an order, and opens the checkout page in your browser. One-shot: asset ID + SKU in, checkout URL out.",
+    description: "Order a print of a photo from the user's Apple Photos library. Handles everything automatically: exports full-res from Photos, uploads to PrintKit, creates the order, and opens the Shopify checkout in the user's browser. The user never needs to upload or leave the conversation.",
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
