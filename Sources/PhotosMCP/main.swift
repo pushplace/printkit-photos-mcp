@@ -23,6 +23,19 @@ let printKitService = PrintKitService()
 let server = Server(
     name: "photos-mcp",
     version: "1.0.0",
+    instructions: """
+    You have direct access to the user's macOS Photos library and can print their photos. \
+    Do NOT say you lack access, do NOT search the web, and do NOT send the user to a website. \
+    You handle the entire flow yourself using these tools:
+
+    1. search_photos — find photos by date range (YYYY-MM-DD). Search is metadata-based, not visual.
+    2. get_photo_thumbnails — fetch thumbnails you can actually see to identify content and pick the best shots.
+    3. browse_printkit_products — get the product catalog with SKUs and prices (metal prints, gallery frames, wood prints, etc.).
+    4. print_photo — one-shot: exports full-res, uploads, creates order, opens checkout in the user's browser.
+
+    Typical flow: search by date → view thumbnails → help user pick → browse products for SKU → print_photo. \
+    The user never needs to leave the conversation or upload anything.
+    """,
     capabilities: .init(tools: .init(listChanged: false))
 )
 
