@@ -1,20 +1,20 @@
 import MCP
 
 let allTools: [Tool] = [
-    searchPhotosTool,
-    listAlbumsTool,
-    getAlbumContentsTool,
-    exportPhotoTool,
-    createAlbumTool,
-    addToAlbumTool,
-    getPhotoThumbnailsTool,
-    browsePrintkitProductsTool,
+    findPhotosTool,
     printPhotoTool,
 ]
 
-let searchPhotosTool = Tool(
-    name: "search_photos",
-    description: "Search the user's Apple Photos library on this Mac. You have full access to their photos — use this when they mention their photos, pictures, camera roll, or want to find an image they took. Returns asset IDs and metadata. Search by date range, media type, and/or filename keyword.",
+let findPhotosTool = Tool(
+    name: "find_photos",
+    description: """
+        Search the user's Apple Photos library on this Mac and return thumbnails you can see. \
+        You have full access to their photo library — use this when they mention their photos, \
+        pictures, camera roll, or want to find an image they took. Returns metadata and inline \
+        JPEG thumbnails so you can visually identify what's in each photo (pets, people, landscapes, etc.) \
+        and help the user pick the best shot. Search is metadata-based (date, filename), not visual — \
+        search by date range first, then look at the thumbnails yourself to find the right photo.
+        """,
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
@@ -37,129 +37,7 @@ let searchPhotosTool = Tool(
             ]),
             "limit": .object([
                 "type": .string("integer"),
-                "description": .string("Maximum number of results (default: 50)"),
-            ]),
-        ]),
-    ])
-)
-
-let listAlbumsTool = Tool(
-    name: "list_albums",
-    description: "List all albums in the user's Apple Photos library on this Mac, including user-created and smart albums (Favorites, Recents, etc.).",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "include_smart_albums": .object([
-                "type": .string("boolean"),
-                "description": .string("Include smart albums like Favorites, Recents (default: true)"),
-            ]),
-        ]),
-    ])
-)
-
-let getAlbumContentsTool = Tool(
-    name: "get_album_contents",
-    description: "Get all photos and videos in a specific Apple Photos album by its ID.",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "album_id": .object([
-                "type": .string("string"),
-                "description": .string("The localIdentifier of the album"),
-            ]),
-            "limit": .object([
-                "type": .string("integer"),
-                "description": .string("Maximum number of assets to return (default: 100)"),
-            ]),
-        ]),
-        "required": .array([.string("album_id")]),
-    ])
-)
-
-let exportPhotoTool = Tool(
-    name: "export_photo",
-    description: "Export a photo or video to /tmp by its local identifier. Returns the file path.",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "asset_id": .object([
-                "type": .string("string"),
-                "description": .string("The localIdentifier of the asset to export"),
-            ]),
-        ]),
-        "required": .array([.string("asset_id")]),
-    ])
-)
-
-let createAlbumTool = Tool(
-    name: "create_album",
-    description: "Create a new user album in the Photos library.",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "name": .object([
-                "type": .string("string"),
-                "description": .string("The name for the new album"),
-            ]),
-        ]),
-        "required": .array([.string("name")]),
-    ])
-)
-
-let addToAlbumTool = Tool(
-    name: "add_to_album",
-    description: "Add an existing asset to an album by their local identifiers.",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "asset_id": .object([
-                "type": .string("string"),
-                "description": .string("The localIdentifier of the asset to add"),
-            ]),
-            "album_id": .object([
-                "type": .string("string"),
-                "description": .string("The localIdentifier of the target album"),
-            ]),
-        ]),
-        "required": .array([.string("asset_id"), .string("album_id")]),
-    ])
-)
-
-// MARK: - Thumbnail Tool
-
-let getPhotoThumbnailsTool = Tool(
-    name: "get_photo_thumbnails",
-    description: "Get actual image thumbnails from the user's Photos library that you can see and analyze visually. Returns inline JPEG images for a batch of asset IDs. Use this after search_photos to look at the photos yourself, identify what's in them (pets, people, landscapes, etc.), and help the user pick the best shot.",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "asset_ids": .object([
-                "type": .string("array"),
-                "description": .string("Array of localIdentifier strings for the photos to thumbnail"),
-                "items": .object([
-                    "type": .string("string"),
-                ]),
-            ]),
-            "max_dimension": .object([
-                "type": .string("integer"),
-                "description": .string("Maximum width/height in pixels (default: 300). Thumbnails maintain aspect ratio."),
-            ]),
-        ]),
-        "required": .array([.string("asset_ids")]),
-    ])
-)
-
-// MARK: - PrintKit Tools
-
-let browsePrintkitProductsTool = Tool(
-    name: "browse_printkit_products",
-    description: "Browse the PrintKit print product catalog with sizes, prices, and SKUs. Products include metal prints, wood prints, gallery frames, acrylic blocks, and large format prints. Use this to find the right SKU before calling print_photo.",
-    inputSchema: .object([
-        "type": .string("object"),
-        "properties": .object([
-            "handle": .object([
-                "type": .string("string"),
-                "description": .string("Optional product handle for details (e.g. \"metal-prints\", \"wood-prints\", \"gallery-frames\", \"acrylic-photo-block\", \"large-format-prints\"). Omit to list all products."),
+                "description": .string("Maximum number of results (default: 20)"),
             ]),
         ]),
     ])
@@ -167,19 +45,53 @@ let browsePrintkitProductsTool = Tool(
 
 let printPhotoTool = Tool(
     name: "print_photo",
-    description: "Order a print of a photo from the user's Apple Photos library. Handles everything automatically: exports full-res from Photos, uploads to PrintKit, creates the order, and opens the Shopify checkout in the user's browser. The user never needs to upload or leave the conversation.",
+    description: """
+        Order a print of a photo from the user's Apple Photos library. Handles everything \
+        automatically: exports full-res from Photos, uploads to PrintKit, creates the order, \
+        and opens the Shopify checkout in the user's browser. The user never needs to upload \
+        anything or leave the conversation.
+
+        Available products and approximate pricing:
+        • Gallery Frames — $53-250, sizes 8x8 to 30x45, colors: black/white/natural, optional 2" white mat
+        • Metal Prints — $30-150, sizes 8x8 to 24x36, modern mounted aluminum
+        • Wood Prints — $28-150, sizes 8x8 to 20x30, printed on natural wood
+        • Acrylic Blocks — $44-120, sizes 4x4 to 8x10, freestanding photo blocks
+        • Large Format Prints — $9-60, sizes 8x8 to 30x45, Kodak photo paper
+
+        Pass the product, size, and options as parameters. The SKU is resolved automatically.
+        """,
     inputSchema: .object([
         "type": .string("object"),
         "properties": .object([
             "asset_id": .object([
                 "type": .string("string"),
-                "description": .string("The localIdentifier of the photo to print"),
+                "description": .string("The localIdentifier of the photo to print (from find_photos results)"),
             ]),
-            "sku": .object([
+            "product": .object([
                 "type": .string("string"),
-                "description": .string("Product variant SKU from browse_printkit_products (e.g. \"MT-8x10\")"),
+                "description": .string("Product type: gallery-frames, metal-prints, wood-prints, acrylic-photo-block, or large-format-prints"),
+                "enum": .array([
+                    .string("gallery-frames"),
+                    .string("metal-prints"),
+                    .string("wood-prints"),
+                    .string("acrylic-photo-block"),
+                    .string("large-format-prints"),
+                ]),
+            ]),
+            "size": .object([
+                "type": .string("string"),
+                "description": .string("Print size, e.g. '8x12', '16x20', '24x36'"),
+            ]),
+            "frame_color": .object([
+                "type": .string("string"),
+                "description": .string("Frame color (gallery frames only): black, white, or natural"),
+                "enum": .array([.string("black"), .string("white"), .string("natural")]),
+            ]),
+            "mat": .object([
+                "type": .string("boolean"),
+                "description": .string("Include 2-inch white mat (gallery frames only, default: false)"),
             ]),
         ]),
-        "required": .array([.string("asset_id"), .string("sku")]),
+        "required": .array([.string("asset_id"), .string("product"), .string("size")]),
     ])
 )

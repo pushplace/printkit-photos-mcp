@@ -18,6 +18,15 @@ final class PrintKitService: @unchecked Sendable {
         return String(data: data, encoding: .utf8) ?? "[]"
     }
 
+    func listVariants() async throws -> String {
+        let url = URL(string: "\(baseURL)/variants.json")!
+        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+            throw PrintKitError.requestFailed("Failed to fetch variant catalog")
+        }
+        return String(data: data, encoding: .utf8) ?? "[]"
+    }
+
     func getProduct(handle: String) async throws -> String {
         let url = URL(string: "\(baseURL)/products/\(handle).json")!
         let (data, response) = try await URLSession.shared.data(from: url)

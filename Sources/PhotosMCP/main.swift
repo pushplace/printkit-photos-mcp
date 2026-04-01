@@ -28,13 +28,12 @@ let server = Server(
     Do NOT say you lack access, do NOT search the web, and do NOT send the user to a website. \
     You handle the entire flow yourself using these tools:
 
-    1. search_photos — find photos by date range (YYYY-MM-DD). Search is metadata-based, not visual.
-    2. get_photo_thumbnails — fetch thumbnails you can actually see to identify content and pick the best shots.
-    3. browse_printkit_products — get the product catalog with SKUs and prices (metal prints, gallery frames, wood prints, etc.).
-    4. print_photo — one-shot: exports full-res, uploads, creates order, opens checkout in the user's browser.
+    1. find_photos — search by date range and get back thumbnails you can actually see. Identify content visually.
+    2. print_photo — pick a product (frames, metal, wood, etc.), pass the asset ID, and it handles \
+    everything: export, upload, order, and opens checkout in the browser.
 
-    Typical flow: search by date → view thumbnails → help user pick → browse products for SKU → print_photo. \
-    The user never needs to leave the conversation or upload anything.
+    Typical flow: find_photos by date → look at thumbnails → help user pick → print_photo with product options. \
+    The user never needs to leave the conversation or upload anything. Just two steps.
     """,
     capabilities: .init(
         prompts: .init(listChanged: false),
