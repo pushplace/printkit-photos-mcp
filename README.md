@@ -31,20 +31,13 @@ We're actively improving this. Contributions and ideas welcome.
 
 | Tool | Description |
 |------|-------------|
-| `search_photos` | Search by date range, media type, keyword |
-| `list_albums` | List all user and smart albums |
-| `get_album_contents` | Fetch assets in a specific album |
-| `get_photo_thumbnails` | Export batch thumbnails (300px JPEG) -- Claude sees the actual images and can curate the best ones |
-| `export_photo` | Export full-res photo to `/tmp` (auto-converts HEIC to JPEG) |
-| `create_album` | Create a new album |
-| `add_to_album` | Add an asset to an album |
-| `browse_printkit_products` | Browse PrintKit catalog -- metal, wood, acrylic, frames, and more |
-| `print_photo` | One-shot print: asset ID + SKU in, checkout URL out |
+| `find_photos` | Search by date range, media type, keyword — returns metadata + inline thumbnails Claude can see and curate |
+| `print_photo` | Pick a product (metal, wood, frames, acrylic, large format), pass asset ID + size — handles export, upload, order, and opens checkout |
 
 ## Prerequisites
 
 - macOS 13+
-- Swift 6.1+ (Xcode 16.3+)
+- Swift 6.1+ (Xcode 16+)
 - Photos.app with photos in your library
 
 ## Install
@@ -103,7 +96,7 @@ No API key needed. The `print_photo` tool handles the full pipeline:
 4. Uploads the image to S3
 5. Creates an order and opens the Shopify checkout in your browser
 
-Available products include metal prints, wood prints, gallery frames, acrylic blocks, large format prints, and more. Use `browse_printkit_products` to see the full catalog with sizes and pricing.
+Available products include metal prints ($30–150), wood prints ($28–150), gallery frames ($53–250, black/white/natural, optional mat), acrylic blocks ($44–120), and large format prints ($9–60). Product and size are passed as parameters — the SKU is resolved automatically.
 
 ## Architecture
 

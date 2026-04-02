@@ -45,15 +45,8 @@ otool -s __TEXT __info_plist .build/debug/printkit-photos-mcp | head -5
 
 | Tool | Description |
 |------|-------------|
-| search_photos | Search by date range, media type, keyword |
-| list_albums | List user and smart albums |
-| get_album_contents | Fetch assets in an album by ID |
-| export_photo | Export asset to /tmp, returns file path |
-| create_album | Create a new album |
-| add_to_album | Add an asset to an album |
-| get_photo_thumbnails | Export batch of 300px JPEG thumbnails, returns inline images Claude can see |
-| browse_printkit_products | Fetch PrintKit product catalog (all products or specific handle) |
-| print_photo | One-shot: export photo -> upload to PrintKit -> create order -> open checkout |
+| find_photos | Search by date range, media type, keyword — returns metadata + inline JPEG thumbnails Claude can see |
+| print_photo | Pick product + size + options, pass asset ID — exports full-res, uploads, creates order, opens checkout. SKU resolved automatically from variants.json. |
 
 ## Architecture
 
